@@ -516,11 +516,62 @@
       .section-columns { grid-template-columns: minmax(0, 1fr); }
       .bg-illustration { display: none; }
     }
+
+@media (max-width: 768px) {
+
+  body {
+    justify-content: flex-start;
+  }
+
+  .app-wrapper {
+    max-width: 100%;
+    padding: 90px 12px 24px;
+  }
+
+  .panel {
+    border-radius: 18px;
+    padding: 20px 16px;
+  }
+
+  /* 상단 BGM 바 모바일 정렬 */
+  .audio-bar {
+    left: 0;
+    transform: none;
+    max-width: 100%;
+    padding: 10px 12px;
+  }
+
+  /* 버튼 줄바꿈 방지 */
+  .audio-controls {
+    flex-wrap: nowrap;
+  }
+
+  /* 카드/섹션 여백 줄이기 */
+  .section-columns {
+    gap: 14px;
+  }
+
+  .section-box {
+    padding: 14px;
+  }
+
+  /* 스누피 이미지 더 안전하게 */
+  .step-hero img {
+    width: 100%;
+    max-width: 280px;
+  }
+
+}
+
   </style>
 </head>
 
-<body>
-  <!-- 좌우 큰 배경 그림 -->
+<body style="
+  max-width:100%;
+  overflow-x:hidden;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+">  <!-- 좌우 큰 배경 그림 -->
   <div class="bg-illustration">
     <img src="assets/images/bg.png" alt="따뜻한 크리스마스 배경" class="left" />
     <img src="assets/images/bg.png" alt="따뜻한 크리스마스 배경" class="right" />
