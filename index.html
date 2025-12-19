@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>ADRA Warm Winter Christmas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #000000;
+      --panel: #151515;
+      --panel-soft: #1f1f1f;
+      --accent: #4ac29a;
+      --accent-soft: #346f5d;
+      --text-main: #ffffff;
+      --text-sub: #d0d0d0;
+      --border: #333333;
+
+      --memo-bg: rgba(15, 31, 26, 0.88);
+      --memo-border: rgba(74, 194, 154, 0.8);
+      --warn-bg: rgba(255, 196, 84, 0.13);
+      --warn-border: rgba(255, 196, 84, 0.55);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      overflow-x: hidden;
+    }
+
+    /* 전체 폭 */
+    .app-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 1500px;
+      min-height: 100vh;
+      padding: 110px 40px 48px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      z-index: 2;
+    }
+
+    /* 상단 BGM 바 */
+    .audio-bar {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 1500px;
+      padding: 10px 24px;
+      background: linear-gradient(90deg, #141414, #111111);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 50;
+    }
+
+    .audio-bar-logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .audio-bar-logo img {
+      height: 24px;
+      width: auto;
+    }
+
+    .audio-controls {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .audio-btn {
+      border: none;
+      background: var(--accent-soft);
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .audio-btn:hover {
+      background: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .audio-volume {
+      width: 120px;
+      accent-color: var(--accent);
+    }
+
+    /* 배경 일러스트: 좌우 크게 */
+    .bg-illustration {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-illustration img {
+      max-height: 95vh;
+      width: auto;
+      opacity: 0.7;
+      filter: saturate(1.08);
+    }
+
+    .bg-illustration .right {
+      transform: scaleX(-1);
+    }
+
+    /* 중앙 패널 */
+    .panel {
+      position: relative;
+      z-index: 2;
+      background: radial-gradient(circle at top, #262626 0, #141414 45%, #050505 100%);
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 36px 36px 30px;
+      box-shadow:
+        0 24px 50px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(74, 194, 154, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      backdrop-filter: blur(6px);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 18px;
+    }
+
+    .panel-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .panel-eyebrow {
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .panel-title {
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .panel-subtitle {
+      font-size: 15px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* 로고 클릭 */
+    .panel-logo { cursor: pointer; }
+    .panel-logo img { height: 56px; width: auto; }
+
+    /* 화면 전환 */
+    .screen { display: none; animation: fadeIn 0.25s ease-out; }
+    .screen.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Step 상단 스누피 영역 */
+    .step-hero {
+      display: flex;
+      justify-content: center;
+      margin: 4px 0 10px;
+    }
+    .step-hero img{
+      width: min(320px, 60vw);
+      height: auto;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      opacity: 0.95;
+    }
+
+    /* 시작 화면 */
+    .start-screen-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .start-lead {
+      font-size: 16px;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+
+    .start-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .start-input {
+      flex: 1;
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #101010;
+      color: var(--text-main);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .start-input::placeholder { color: #777777; }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 11px 20px;
+      background: var(--accent);
+      color: #000000;
+      font-weight: 700;
+      font-size: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: #5dd3ac;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-sub);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: #222222;
+      color: #ffffff;
+    }
+
+    .help-text {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+
+    /* 메인 카드 */
+    .main-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: var(--panel-soft);
+      border-radius: 20px;
+      padding: 16px 16px 18px;
+      border: 1px solid rgba(255,255,255,0.04);
+      cursor: pointer;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background: radial-gradient(circle at top, rgba(74,194,154,0.18), transparent 55%);
+      transition: opacity 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 30px rgba(0,0,0,0.7);
+      border-color: rgba(74,194,154,0.7);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-label {
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+
+    /* 섹션 공통 */
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .section-tagline {
+      font-size: 14px;
+      color: var(--accent);
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .section-columns {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 22px;
+      margin-top: 8px;
+    }
+
+    .section-box {
+      background: rgba(0,0,0,0.32);
+      border-radius: 18px;
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .section-box-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .section-text {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.85;
+    }
+
+    .section-list {
+      list-style: none;
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.85;
+    }
+
+    .section-list li {
+      position: relative;
+      padding-left: 14px;
+      margin-bottom: 6px;
+    }
+
+    .section-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--accent);
+    }
+
+    .section-highlight {
+      font-size: 14px;
+      color: #ffe6a7;
+      margin-top: 10px;
+      line-height: 1.75;
+    }
+
+    /* 네비 */
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      gap: 12px;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .step-indicator {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    /* 진행자 전용 메모 */
+    .memo-row{
+      display:flex;
+      justify-content:flex-end;
+      margin: 6px 0 12px;
+    }
+    .memo-toggle {
+      border: 1px dashed rgba(74, 194, 154, 0.85);
+      background: transparent;
+      color: rgba(127, 231, 197, 0.95);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: transform .08s, background .2s;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .memo-toggle:hover{ transform: translateY(-1px); background: rgba(74,194,154,0.08); }
+    .memo-box {
+      display: none;
+      margin-top: 10px;
+      background: var(--memo-bg);
+      border: 1px solid var(--memo-border);
+      border-radius: 16px;
+      padding: 14px 14px 12px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #e7fff6;
+    }
+    .memo-box strong{ color: #7fe7c5; }
+    .memo-list{ list-style:none; margin-top: 8px; }
+    .memo-list li{ position:relative; padding-left: 14px; margin-bottom: 6px; }
+    .memo-list li::before{ content:"•"; position:absolute; left:0; color:#7fe7c5; }
+
+    /* 경고 배너 */
+    .warn-banner{
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: #ffe6a7;
+      font-size: 13px;
+      line-height: 1.7;
+      margin: 6px 0 14px;
+    }
+    .warn-banner strong{ color:#fff1c9; }
+
+    /* Step3 안전 확인 모달 */
+    .modal-backdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+    .modal{
+      width: min(560px, 92vw);
+      background: #0f0f0f;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.7);
+      padding: 18px 18px 16px;
+    }
+    .modal h3{ font-size: 18px; margin-bottom: 8px; }
+    .modal p{ color: var(--text-sub); font-size: 13px; line-height: 1.75; }
+    .modal ul{ list-style:none; margin-top: 10px; color: var(--text-sub); font-size: 13px; line-height: 1.75; }
+    .modal li{ position:relative; padding-left: 14px; margin-bottom: 6px; }
+    .modal li::before{ content:"•"; position:absolute; left:0; color:#ffe6a7; }
+    .modal .modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top: 14px; }
+
+    @media (max-width: 1100px) {
+      .bg-illustration img { max-height: 80vh; opacity: 0.55; }
+    }
+
+    @media (max-width: 900px) {
+      .app-wrapper { padding: 90px 16px 24px; }
+      .panel { padding: 24px 20px 22px; }
+      .panel-title { font-size: 24px; }
+      .main-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .section-columns { grid-template-columns: minmax(0, 1fr); }
+      .bg-illustration { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 좌우 큰 배경 그림 -->
+  <div class="bg-illustration">
+    <img src="assets/images/bg.png" alt="따뜻한 크리스마스 배경" class="left" />
+    <img src="assets/images/bg.png" alt="따뜻한 크리스마스 배경" class="right" />
+  </div>
+
+  <!-- 상단 BGM 바 -->
+  <div class="audio-bar">
+    <div class="audio-bar-logo">
+      <img src="assets/images/adra-logo.png" alt="ADRA 로고" />
+      <span>ADRA Warm Winter BGM</span>
+    </div>
+    <div class="audio-controls">
+      <button class="audio-btn" id="playPauseBtn">재생</button>
+      <input class="audio-volume" id="volumeSlider" type="range" min="0" max="1" step="0.02" value="0.4" />
+    </div>
+    <audio id="bgm" loop preload="auto" playsinline webkit-playsinline>
+  <source src="assets/audio/christmas-bgm.mp3" type="audio/mpeg">
+</audio>
+  </div>
+
+  <!-- Step 3 안전 확인 모달 -->
+  <div class="modal-backdrop" id="safetyModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="safetyTitle">
+      <h3 id="safetyTitle">🔥 안전 확인 (Step 3: 키링 만들기)</h3>
+      <p>
+        이 단계는 <strong style="color:#ffe6a7;">열을 사용하는 활동</strong>이 포함됩니다.
+        진행자는 아래 내용을 먼저 확인한 뒤 진행해 주세요.
+      </p>
+      <ul>
+        <li><strong style="color:#fff1c9;">화상의 위험</strong>이 있으니 반드시 <strong style="color:#fff1c9;">지도자(어른)의 지도 하에</strong> 진행합니다.</li>
+        <li>가능하다면 <strong style="color:#fff1c9;">장갑 착용</strong>을 권장합니다.</li>
+        <li>히팅건/오븐/에어프라이어는 <strong style="color:#fff1c9;">진행자만 조작</strong>합니다.</li>
+        <li>가열 중 냄새/연기가 날 수 있어 <strong style="color:#fff1c9;">충분히 환기</strong>합니다.</li>
+      </ul>
+      <div class="modal-actions">
+        <button class="btn-ghost btn" id="safetyCancelBtn">지금은 메인으로</button>
+        <button class="btn" id="safetyOkBtn">확인했고 진행할게요</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-wrapper">
+    <main class="panel">
+      <header class="panel-header">
+        <div class="panel-title-block">
+          <div class="panel-eyebrow">ADRA Christmas Program · 표준 운영 가이드</div>
+          <h1 class="panel-title" id="panelTitle">교회 선택 후 시작해 주세요</h1>
+          <p class="panel-subtitle" id="panelSubtitle">
+            진행자가 화면을 보며 순서대로 안내할 수 있도록 구성된 로컬 웹 페이지입니다.
+          </p>
+        </div>
+        <div class="panel-logo" id="logoHome">
+          <img src="assets/images/adra-logo.png" alt="ADRA" />
+        </div>
+      </header>
+
+      <!-- 화면 1: 교회 이름 입력 -->
+      <section class="screen active" id="screen-start">
+        <div class="memo-row">
+          <button class="memo-toggle" data-memo="memo-start">진행자 전용 메모 보기</button>
+        </div>
+        <div class="memo-box" id="memo-start">
+          <strong>진행자 메모</strong>
+          <ul class="memo-list">
+            <li>진행 시작 전: BGM 볼륨(0.3~0.5) + 좌석 배치(원형/ㄷ자) 먼저 정리하면 진행이 편합니다.</li>
+            <li>교회명은 화면 상단에 자동 반영됩니다. (예: “갈매” 입력 → “갈매교회”)</li>
+            <li>현장 혼잡을 줄이려면 프로그램 시작 전에 “패키지는 단계가 되었을 때 열기”를 한 번만 강조해 주세요.</li>
+          </ul>
+        </div>
+
+        <div class="start-screen-body">
+          <p class="start-lead">
+            오늘 함께하는 교회 이름을 입력해 주세요.<br>
+            <span style="color:#aaaaaa;font-size:14px;">
+              예) "석계", "갈매" 처럼 짧게 입력해도 됩니다. 화면에서는 자동으로 “교회”가 붙습니다.
+            </span>
+          </p>
+
+          <div class="start-form">
+            <input type="text" id="churchInput" class="start-input" placeholder="예: 석계 / 갈매" />
+            <button class="btn" id="startBtn">시작하기 🎄</button>
+          </div>
+
+          <p class="help-text">
+            · 입력한 교회 이름은 상단에 <strong>“ADRA와 ○○교회가 함께 하는 Warm Winter Christmas”</strong>로 표시됩니다.<br>
+            · 언제든지 F5를 눌러 처음 화면으로 돌아와 다시 입력할 수 있습니다.
+          </p>
+        </div>
+      </section>
+
+      <!-- 화면 2: 메인 메뉴 -->
+      <section class="screen" id="screen-main">
+        <div class="memo-row">
+          <button class="memo-toggle" data-memo="memo-main">진행자 전용 메모 보기</button>
+        </div>
+        <div class="memo-box" id="memo-main">
+          <strong>진행자 메모</strong>
+          <ul class="memo-list">
+            <li>이 페이지는 “진행 메뉴판”입니다. 꼭 1→6 순서대로 하지 않아도 됩니다.</li>
+            <li>인원이 많으면 Step 4(전달식)는 대표 공유 방식으로 줄여도 자연스럽습니다.</li>
+            <li>Step 6(SNS 인증/피드백)은 ADRA 성과 수집에 중요한 단계입니다. 잊지 않게 체크하세요.</li>
+          </ul>
+        </div>
+
+        <p class="section-tagline">
+          순서를 따라가며 카드를 클릭하면, 각 단계의 진행 방법이 상세히 안내됩니다.
+        </p>
+
+        <div class="main-grid">
+          <div class="card" data-step="0">
+            <div class="card-label">STEP 1</div>
+            <div class="card-title">오프닝 & WHO IS ADRA?</div>
+            <div class="card-desc">프로그램 시작 안내와 함께 ADRA를 소개하고, 분위기를 잡습니다.</div>
+          </div>
+
+          <div class="card" data-step="1">
+            <div class="card-label">STEP 2</div>
+            <div class="card-title">나만의 팅커벨 뽑기</div>
+            <div class="card-desc">감사 마음을 전할 대상을 뽑고, 오늘의 “타겟”을 정합니다.</div>
+          </div>
+
+          <div class="card" data-step="2">
+            <div class="card-label">STEP 3</div>
+            <div class="card-title">키링 만들기</div>
+            <div class="card-desc">수축 종이에 마음을 담아, 세상에 하나뿐인 키링을 만듭니다.</div>
+          </div>
+
+          <div class="card" data-step="3">
+            <div class="card-label">STEP 4</div>
+            <div class="card-title">감사의 마음 전달식</div>
+            <div class="card-desc">서로에게 고마움을 말과 선물로 전하는 따뜻한 시간입니다.</div>
+          </div>
+
+          <div class="card" data-step="4">
+            <div class="card-label">STEP 5</div>
+            <div class="card-title">연말 시상식</div>
+            <div class="card-desc">유쾌하지만 진심이 담긴, 우리 공동체만의 작은 시상식입니다.</div>
+          </div>
+
+          <div class="card" data-step="5">
+            <div class="card-label">STEP 6</div>
+            <div class="card-title">마무리 & SNS 인증</div>
+            <div class="card-desc">오늘의 순간을 기록하고, ADRA와 연결되는 마지막 단계입니다.</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <div class="nav-left">
+            <span class="step-indicator">원하는 단계를 클릭해 주세요.</span>
+          </div>
+          <div class="nav-right">
+            <button class="btn-ghost btn" id="goToFirstStepBtn">첫 단계로 이동</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 1 -->
+      <section class="screen" id="screen-step-0">
+        <div class="memo-row">
+          <button class="memo-toggle" data-memo="memo-step-0">진행자 전용 메모 보기</button>
+        </div>
+        <div class="memo-box" id="memo-step-0">
+          <strong>진행자 메모</strong>
+          <ul class="memo-list">
+            <li>오프닝은 설명보다 “따뜻함”이 우선입니다. 분위기만 잡아도 반은 성공이에요.</li>
+            <li>패키지 “미리 열지 않기”는 여기서 한 번만 말해도 충분합니다.</li>
+          </ul>
+        </div>
+
+        <div class="step-hero">
+          <img src="assets/images/snoopy-1.jpg" alt="스누피 1">
+        </div>
+
+        <h2 class="section-title">Step 1. 오프닝 &amp; WHO IS ADRA?</h2>
+        <p class="section-tagline">
+          아드라코리아와 함께하는 WARM WINTER CHRISTMAS에 오신 <strong id="churchInline1">OO교회</strong> 여러분들을 환영합니다!
+        </p>
+
+        <div class="section-columns">
+          <div class="section-box">
+            <div class="section-box-title">오프닝 멘트(그대로 읽어도 OK)</div>
+            <div class="section-text">
+              이 프로그램은 재림교회 NGO단체인 <strong>아드라코리아</strong>를 알리고,<br>
+              전국에 흩어진 학생·청년반 일원들이 따뜻한 연말을 맞이할 수 있도록 준비되었습니다.<br><br>
+              원활한 진행을 위하여 준비된 패키지는 미리 열지 마시고,<br>
+              각 차례가 되었을 때 오픈해주시면 더욱 따뜻한 시간을 보낼 수 있으리라 기대됩니다.
+            </div>
+
+            <div class="section-highlight">
+              TIP. 지금은 “설명 많이 하기”보다, 분위기(따뜻함)를 먼저 잡아주는 게 훨씬 좋아요.
+            </div>
+          </div>
+
+          <div class="section-box">
+            <div class="section-box-title">기본 및 시상식 패키지 오픈</div>
+            <ul class="section-list">
+              <li>지금 활용할 패키지는 <strong>기본 및 시상식 패키지</strong>입니다.</li>
+              <li>진행자는 기본 패키지를 열어서 <strong>산타 모자를 착용</strong>해주시면 됩니다.</li>
+              <li>그 외 다른 물품들은 진행을 위해 <strong>가급적 비밀 유지</strong> 부탁드립니다.</li>
+            </ul>
+
+            <div class="section-box-title" style="margin-top:14px;">분위기 연출(권장)</div>
+            <ul class="section-list">
+              <li>상단 배경음악을 재생한 채, 따뜻한 곳에서 둘러앉아 진행</li>
+              <li>코코아를 마시면서 “연말” 느낌을 자연스럽게 만들기</li>
+              <li>교회별 상황에 맞추어 무리하지 않는 선에서 조정하기</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <div class="nav-left">
+            <button class="btn-ghost btn nav-prev">이전</button>
+          </div>
+          <div class="nav-right">
+            <button class="btn-ghost btn nav-home">메인으로</button>
+            <button class="btn nav-next">다음</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="screen" id="screen-step-1">
+        <div class="memo-row">
+          <button class="memo-toggle" data-memo="memo-step-1">진행자 전용 메모 보기</button>
+        </div>
+        <div class="memo-box" id="memo-step-1">
+          <strong>진행자 메모</strong>
+          <ul class="memo-list">
+            <li>비밀 유지가 핵심입니다. “끝까지 비밀!”을 한 번만 강조해도 분위기가 살아납니다.</li>
+            <li>인원에 따라 중복 허용/재뽑기 등 유연하게 하되, 진행자는 기준을 먼저 정해두면 좋아요.</li>
+          </ul>
+        </div>
+
+        <div class="step-hero">
+          <img src="assets/images/snoopy-2.jpg" alt="스누피 2">
+        </div>
+
+        <h2 class="section-title">Step 2. 나만의 팅커벨 뽑기</h2>
+        <p class="section-tagline">오늘 감사의 마음을 전할 “나만의 팅커벨”을 정하는 시간입니다.</p>
+
+        <div class="section-columns">
+          <div class="section-box">
+            <div class="section-box-title">진행 순서</div>
+            <ul class="section-list">
+              <li>모든 참가자에게 기본 및 시상식 패키지 안에 들어있는 포스트잇과 펜을 나눠 줍니다.</li>
+              <li>각자 자신의 이름을 적어 접어서 모읍니다.</li>
+              <li>한 명씩 뽑되, <strong>뽑은 이름은 끝까지 비밀</strong>로 유지합니다.</li>
+              <li>“이 사람이 오늘 내가 감사와 축복을 전할 나만의 팅커벨입니다.”라고 안내합니다.</li>
+            </ul>
+
+            <div class="section-highlight">
+              TIP. 이때부터 “어떤 말을 해줄까?”를 마음속으로 준비하게 해주면 뒤가 더 예뻐져요.
+            </div>
+          </div>
+
+          <div class="section-box">
+            <div class="section-box-title">진행 팁</div>
+            <ul class="section-list">
+              <li>인원이 적으면 중복 허용 / 인원이 많으면 다시 뽑기로 유연하게 조정</li>
+              <li>서로 이름을 모를 수 있으니, 나중에 공개 타임에 자연스럽게 소개 가능</li>
+              <li>장난 분위기가 과해지면 “오늘은 따뜻한 분위기”라고 한 번만 톤 잡아주기</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <div class="nav-left">
+            <button class="btn-ghost btn nav-prev">이전</button>
+          </div>
+          <div class="nav-right">
+            <button class="btn-ghost btn nav-home">메인으로</button>
+            <button class="btn nav-next">다음</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="screen" id="screen-step-2">
+        <div class="memo-row">
+          <button class="memo-toggle" data-memo="memo-step-2">진행자 전용 메모 보기</button>
+        </div>
+        <div class="memo-box" id="memo-step-2">
+          <strong>진행자 메모</strong>
+          <ul class="memo-list">
+            <li>20명 미만 신청 교회에는 <strong>히팅건 1개</strong>, 20명 이상 신청 교회에는 <strong>히팅건 2개</strong>가 제공되었습니다.</li>
+            <li>혼잡 방지: 테이블/줄 단위로 “가열 담당 구역”을 따로 두면 안전합니다.</li>
+            <li>이 단계는 사고 리스크가 가장 높습니다. ‘내가 조작한다’ 원칙만 지켜도 안전해져요.</li>
+          </ul>
+        </div>
+
+        <div class="step-hero">
+          <img src="assets/images/snoopy-3.jpg" alt="스누피 3">
+        </div>
+
+        <div class="warn-banner">
+          <strong>※ 안전 안내</strong> : 이 단계는 <strong>열을 사용하는 활동</strong>이 포함됩니다.
+          반드시 <strong>지도자(어른) 주도</strong>로 진행하고, 가열기구는 <strong>진행자만 조작</strong>해 주세요.
+        </div>
+
+        <h2 class="section-title">Step 3. 키링 만들기</h2>
+        <p class="section-tagline">나만의 팅커벨을 떠올리며, 감사와 축복을 담은 키링을 만듭니다.</p>
+
+        <div class="section-columns">
+          <div class="section-box">
+            <div class="section-box-title">만들기 안내(따뜻하게)</div>
+            <ul class="section-list">
+              <li>키링만드기 패키지를 오픈합니다. </li>
+              <li>“이 친구에게 해주고 싶은 말” 또는 “어울리는 그림/성경절”을 자유롭게 그려 주세요.</li>
+              <li>수축종이는 작아지니, 글씨는 너무 작게 쓰지 않도록 안내합니다.</li>
+              <li>완성 후 둥글게 자르고, 상단에 구멍을 뚫어 키링을 연결합니다.</li>
+            </ul>
+            <div class="section-highlight">
+              TIP. “이 키링은 선물보다도, 오늘의 마음이 남는 기록”이라고 말해주면 분위기 좋아져요.
+            </div>
+          </div>
+
+ <!-- 구성품 안내 -->
+        <div class="section-box" style="margin-top:16px;">
+          <div class="section-box-title">구성품 안내</div>
+          <ul class="section-list">
+            <li><strong>개인별 제공:</strong> 슈링클스 용지 1장, 구슬 체인 1개</li>
+            <li><strong>공용 제공:</strong> 히팅건, 핀셋, 누름판</li>
+            <li><strong>누름판 사용:</strong> 슈링클을 구운 후, 잘 펴질 수 있도록 <strong>즉시 누름판으로 눌러주세요</strong>.</li>
+            <li><strong>1공 펀치:</strong> 수축 시 구멍이 작아질 수 있으니 <strong>위치를 조금씩 바꿔가며 여러 번 눌러</strong> 구멍 크기를 늘려주세요.</li>
+            <li><strong>라운드 컷팅기:</strong> 둥그런 모서리를 원하는 경우 활용할 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <!-- 그림 도구 사용 안내 -->
+        <div class="section-box" style="margin-top:16px;">
+          <div class="section-box-title">그림 도구 사용 안내</div>
+          <ul class="section-list">
+            <li><strong>사용 가능:</strong> 연필, 볼펜, 색연필, 형광펜, 사인펜, 수채화 물감, 매직</li>
+            <li><strong>사용 금지:</strong> 크레파스, 돌려쓰는 색연필, 크레용 등</li>
+          </ul>
+          <div class="section-highlight">
+            ※ 기름 성분이 많거나 녹는 재질의 도구는 가열 시 번지거나 냄새가 날 수 있어 사용을 피해주세요.
+          </div>
+        </div>
+
+
+          <div class="section-box">
+            <div class="section-box-title" style="color:#ffe6a7;">🔥 안전 수칙 (확실하게)</div>
+            <ul class="section-list">
+              <li><strong>화상의 위험</strong>이 있으니 반드시 <strong>지도자(어른)의 지도하</strong>에 사용할 것</li>
+              <li><strong>장갑이 있다면 장갑을 착용</strong>하고 진행하길 권장</li>
+              <li>히팅건/오븐/에어프라이어 등 가열 기구는 반드시 <strong>진행자만 조작</strong></li>
+              <li>가열 중 말렸다가 펴지는 과정은 정상이며, <strong>손으로 만지지 않기</strong></li>
+              <li>가열 후 충분히 식힌 뒤에만 구슬 체인/키링 고리를 연결</li>
+              <li>가열 시 냄새/연기가 날 수 있어 <strong>창문 열고 충분히 환기</strong></li>
+            </ul>
+
+            <div class="section-highlight" style="color:#ffdada;">
+              ※ 안전을 위해 “가열 담당 구역”을 정해, 대기 인원이 몰리지 않게 해주세요.
+            </div>
+          </div>
+        </div>
+
+        <div class="section-box" style="margin-top:16px;">
+          <div class="section-box-title">가열 도구 & 사용 금지 안내 (텍스트 버전)</div>
+          <ul class="section-list">
+            <li><strong>사용 가능(예시):</strong> 토스터 오븐, 주방 오븐, 전자레인지 오븐 기능(일부), Craft용 드라이어</li>
+            <li><strong>가정용 오븐(권장):</strong> 200~250℃ 예열 후 사용 (약 5분 내외, 작품 크기에 따라 달라질 수 있음)</li>
+            <li><strong>Craft용 드라이어:</strong> 작품에서 약 5cm 내외 거리를 유지하며 가열 (강한 바람에 날아갈 수 있으니 주의)</li>
+            <li><strong>사용 금지:</strong> 전자레인지(일반), 일반 토스터기, 직화(불), 핫플레이트 등 지정 외 전열기구</li>
+            <li><strong>주의:</strong> 가열 시 약간의 연기/냄새가 날 수 있으니 충분히 환기 후 사용</li>
+          </ul>
+        </div>
+
+        <div class="section-box" style="margin-top:16px;">
+          <div class="section-box-title">문제 발생 시(진행자 대응 가이드)</div>
+          <ul class="section-list">
+            <li><strong>연기가 심하거나 타는 냄새가 강함:</strong> 즉시 전원 OFF → 창문 열고 환기 → 참가자는 잠시 이동</li>
+            <li><strong>작품이 과도하게 변형/녹음:</strong> 즉시 가열 중단 → 충분히 식힌 뒤 폐기(또는 재제작 안내)</li>
+            <li><strong>화상/찜질 정도의 사고:</strong> 즉시 냉수로 10분 이상 식히기(얼음 직접 접촉은 피함) → 필요 시 의료 도움</li>
+            <li><strong>혼잡/대기열 과열:</strong> 가열 담당 구역을 분리하고, 테이블/번호 순서로 진행</li>
+          </ul>
+          <div class="section-highlight">TIP. “가열은 제가 할게요!” 이 한 문장이 사고를 크게 줄입니다.</div>
+        </div>
+
+        <div class="nav-row">
+          <div class="nav-left">
+            <button class="btn-ghost btn nav-prev">이전</button>
+          </div>
+          <div class="nav-right">
+            <button class="btn-ghost btn nav-home">메인으로</button>
+            <button class="btn nav-next">다음</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="screen" id="screen-step-3">
+        <div class="memo-row">
+          <button class="memo-toggle" data-memo="memo-step-3">진행자 전용 메모 보기</button>
+        </div>
+        <div class="memo-box" id="memo-step-3">
+          <strong>진행자 메모</strong>
+          <ul class="memo-list">
+            <li>말이 길 필요 없습니다. “고마웠던 점 1~2개”만으로도 충분히 감동이 납니다.</li>
+            <li>선물이 소소한 점 너른 양해 부탁드립니다. </li>
+          </ul>
+        </div>
+
+        <div class="step-hero">
+          <img src="assets/images/snoopy-4.jpg" alt="스누피 4">
+        </div>
+
+        <h2 class="section-title">Step 4. 감사의 마음 전달식</h2>
+        <p class="section-tagline">서로를 향한 감사와 축복을 말과 선물로 나누는 시간입니다.</p>
+
+        <div class="section-columns">
+          <div class="section-box">
+            <div class="section-box-title">진행 순서</div>
+            <ul class="section-list">
+              <li>원형으로 모여 앉고, 진행자가 첫 번째로 시작합니다.</li>
+              <li>“제가 뽑은 나만의 팅커벨은 ○○○입니다.”라고 공개합니다.</li>
+              <li>지난 한 해 동안 감사했던 점 1~2가지를 짧고 구체적으로 나눕니다.</li>
+              <li>만든 키링을 전달하고, 가운데 선물 중 팅커벨에게 필요할 것 같은 선물 한 개를 이유와 함께 전달합니다.</li>
+              <li>선물을 받은 사람이 다음 순서를 이어갑니다.</li>
+            </ul>
+
+            <div class="section-highlight">
+              TIP. 말이 길어질 필요 없어요. “너 때문에 고마웠어” 한 문장만으로도 충분히 따뜻해집니다.
+            </div>
+          </div>
+
+          <div class="section-box">
+            <div class="section-box-title">분위기 유지 팁</div>
+            <ul class="section-list">
+              <li>말하기 어려워하면 “한 문장만 해도 돼!”라고 가볍게 풀어주기</li>
+              <li>너무 장난스럽게 흐르면 “오늘은 따뜻하게 가보자~”로 톤만 한 번 잡기</li>
+              <li>인원이 많으면 대표 2~3명만 공유하고 나머지는 자유교제 때 전달해도 OK</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <div class="nav-left">
+            <button class="btn-ghost btn nav-prev">이전</button>
+          </div>
+          <div class="nav-right">
+            <button class="btn-ghost btn nav-home">메인으로</button>
+            <button class="btn nav-next">다음</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 5 -->
+      <section class="screen" id="screen-step-4">
+        <div class="memo-row">
+          <button class="memo-toggle" data-memo="memo-step-4">진행자 전용 메모 보기</button>
+        </div>
+<div class="memo-box" id="memo-step-4">
+  <strong>진행자 메모</strong>
+  <ul class="memo-list">
+    <li>
+      <strong>성실 참석상</strong> (상품: 아드라 연차보고서)<br>
+      성실함은 가장 큰 무기입니다. 가장 좋은 선물인 <strong>아드라 연차보고서</strong>를 드립니다.<br>
+      성실하게 읽어주시면 감사하겠습니다.
+    </li>
+    <li>
+      <strong>성장 폭발상</strong> (상품: 삼육 고칼슘 두유)<br>
+      한 해 동안 가장 많이 성장하신 것을 진심으로 축하드립니다.<br>
+      앞으로도 더 크게 성장하시라는 의미로 <strong>고칼슘 두유</strong>를 드립니다.
+    </li>
+    <li>
+      <strong>올해의 산타상</strong> (상품: 산타 모자)<br>
+      묵묵하게 뒤에서 일해주시는 모습이 얼마나 감사한지 모릅니다.<br>
+      <strong>그대가 바로 우리 교회의 산타입니다!</strong>
+    </li>
+    <li>
+      <strong>올해의 루돌프상</strong> (상품: 루돌프 코)<br>
+      남을 즐겁게 해주는 것은 아무나 할 수 없는 아주 특별한 달란트입니다.<br>
+      앞으로도 주변 사람들에게 웃음을 선물해 주세요!
+    </li>
+  </ul>
+</div>
+
+
+        <div class="step-hero">
+          <img src="assets/images/snoopy-5.jpg" alt="스누피 5">
+        </div>
+
+        <h2 class="section-title">Step 5. 연말 시상식</h2>
+        <p class="section-tagline">유쾌하지만 진심이 담긴, 우리 공동체만의 작은 시상식입니다.</p>
+
+        <div class="section-columns">
+          <div class="section-box">
+            <div class="section-box-title">기본 시상 항목</div>
+            <ul class="section-list">
+              <li><strong>성실 참석상</strong> – 1년 동안 꾸준히 함께 해 준 친구</li>
+              <li><strong>성장 폭발상</strong> – 눈에 띄게 성장한 친구</li>
+              <li><strong>올해의 산타상</strong> – 숨은 공로자</li>
+              <li><strong>올해의 루돌프상</strong> – 분위기 메이커</li>
+            </ul>
+
+            <div class="section-highlight">TIP. 수상 사유를 “짧게, 구체적으로” 말해주면 웃기면서도 감동이 살아납니다.</div>
+          </div>
+
+          <div class="section-box">
+            <div class="section-box-title">진행 팁</div>
+            <ul class="section-list">
+              <li>기본 및 시상식 패키지에서 상장을 꺼내서 수상</li>
+              <li>수상자는 진행자가 선정 혹은 모두 함께 토의 하에 선정</li>
+              <li>각 상에 해당하는 상품은 진행자 전용 메모를 열어서 확인 후 함께 제공</li>
+              <li>마지막에는 “올해 <strong id="churchInline2">OO교회</strong>가 참 따뜻했어요”로 마무리 멘트</li>
+              <li>과해지면 부담이 되니, “가볍고 예쁘게”가 포인트</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <div class="nav-left">
+            <button class="btn-ghost btn nav-prev">이전</button>
+          </div>
+          <div class="nav-right">
+            <button class="btn-ghost btn nav-home">메인으로</button>
+            <button class="btn nav-next">다음</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 6 -->
+      <section class="screen" id="screen-step-5">
+        <div class="memo-row">
+          <button class="memo-toggle" data-memo="memo-step-5">진행자 전용 메모 보기</button>
+        </div>
+        <div class="memo-box" id="memo-step-5">
+          <strong>진행자 메모</strong>
+          <ul class="memo-list">
+            <li>Step 6는 “성과 수집” 단계입니다. (사진/영상 확보 + 폼/QR 안내)</li>
+            <li>업로드 안내는 길게 설명하지 말고, “팔로우 + 멘션 + 한 줄 소감”만 딱 말해도 됩니다.</li>
+          </ul>
+        </div>
+
+        <div class="step-hero">
+          <img src="assets/images/snoopy-6.jpg" alt="스누피 6">
+        </div>
+
+        <h2 class="section-title">Step 6. 마무리 &amp; SNS 인증</h2>
+        <p class="section-tagline">오늘의 따뜻했던 순간을 기록하고, ADRA와도 연결되는 마지막 단계입니다.</p>
+
+        <!-- SNS 인증 & 만족도 조사 -->
+        <div class="section-box" style="margin-top:16px;">
+          <div class="section-box-title">📸 SNS 인증 & 만족도 조사 (필수)</div>
+
+          <ul class="section-list">
+            <li><strong>개인별 필수:</strong> ADRA 공식 인스타그램 팔로우</li>
+            <li><strong>개인별 필수:</strong> 구글폼 만족도 조사 참여</li>
+          </ul>
+
+          <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-top:12px;">
+
+            <!-- ADRA 인스타 QR -->
+            <div style="text-align:center;">
+              <img src="assets/qr/adra-instagram.png" alt="ADRA 인스타그램 QR" style="width:140px; max-width:40vw; border-radius:12px; background:#fff; padding:6px;">
+              <p style="font-size:13px; margin-top:6px; color:#d0d0d0;">
+                ADRA 공식 인스타그램<br>
+                <a href="https://www.instagram.com/adrakorea/" target="_blank" style="color:#4ac29a; text-decoration:underline;">
+                  @adrakorea 바로가기
+                </a>
+              </p>
+            </div>
+
+            <!-- 구글폼 QR -->
+            <div style="text-align:center;">
+              <img src="assets/qr/google-form.png" alt="만족도 조사 구글폼 QR" style="width:140px; max-width:40vw; border-radius:12px; background:#fff; padding:6px;">
+              <p style="font-size:13px; margin-top:6px; color:#d0d0d0;">
+                만족도 조사<br>
+                (구글폼 필수 참여)
+              </p>
+            </div>
+
+          </div>
+
+          <div class="section-highlight" style="margin-top:12px;">
+            ※ 팔로우 + 만족도 조사 완료 후, 오늘 프로그램이 마무리됩니다.<br>
+            ※ 설문은 다음 프로그램 개선을 위한 소중한 자료로 활용됩니다.
+          </div>
+        </div>
+
+
+
+        <div class="section-columns">
+          <div class="section-box">
+            <div class="section-box-title">마무리 진행</div>
+            <ul class="section-list">
+              <li>단체 사진/셀카 타임 (키링, 선물 들고 촬영)</li>
+              <li>개인 또는 교회 계정으로 스토리/게시물 업로드 안내</li>
+              <li><strong>필수:</strong> ADRA 공식 계정 팔로우 + 태그/멘션</li>
+              <li>가능하다면 한 줄 소감 + 기도/찬양으로 따뜻하게 마무리</li>
+            </ul>
+
+            <div class="section-highlight">TIP. “오늘의 따뜻함이 여기서 끝나지 않고, 누군가에게 이어지면 좋겠어요.” 한 마디가 분위기 완성입니다.</div>
+          </div>
+
+          <div class="section-box">
+            <div class="section-box-title">진행자 체크리스트</div>
+            <ul class="section-list">
+              <li>팔로우/업로드 안내가 잘 되었는지 확인</li>
+              <li>우수 교회 선정을 위한 사진/영상 자료 확보</li>
+              <li>구글 폼 QR/링크 띄우고 간단 피드백 요청</li>
+            </ul>
+            <div class="section-highlight">※ 우수 참여 교회는 제출된 인증 자료를 바탕으로 선정됩니다.</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <div class="nav-left">
+            <button class="btn-ghost btn nav-prev">이전</button>
+          </div>
+          <div class="nav-right">
+            <button class="btn-ghost btn nav-home">메인으로</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+ 
+    // ---------- 진행자 메모 토글 ----------
+    function bindMemoToggles() {
+      document.querySelectorAll('.memo-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-memo');
+          const box = document.getElementById(id);
+          if (!box) return;
+          const open = box.style.display === 'block';
+          box.style.display = open ? 'none' : 'block';
+          btn.textContent = open ? '진행자 전용 메모 보기' : '진행자 전용 메모 닫기';
+        });
+      });
+    }
+
+    // ---------- 화면 전환 로직 ----------
+    const screens = {
+      start: document.getElementById("screen-start"),
+      main: document.getElementById("screen-main"),
+      steps: [
+        document.getElementById("screen-step-0"),
+        document.getElementById("screen-step-1"),
+        document.getElementById("screen-step-2"),
+        document.getElementById("screen-step-3"),
+        document.getElementById("screen-step-4"),
+        document.getElementById("screen-step-5"),
+      ],
+    };
+
+    let currentStepIndex = 0;
+    let churchName = "";
+    const panelTitle = document.getElementById("panelTitle");
+    const panelSubtitle = document.getElementById("panelSubtitle");
+
+    // Step 내부 텍스트에서 교회명 보여줄 곳
+    const churchInline1 = document.getElementById("churchInline1");
+    const churchInline2 = document.getElementById("churchInline2");
+
+    // Step3 안전 모달
+    const safetyModal = document.getElementById('safetyModal');
+    const safetyOkBtn = document.getElementById('safetyOkBtn');
+    const safetyCancelBtn = document.getElementById('safetyCancelBtn');
+
+    function hideAllScreens() {
+      screens.start.classList.remove("active");
+      screens.main.classList.remove("active");
+      screens.steps.forEach(sec => sec.classList.remove("active"));
+    }
+
+    function showStart() {
+      hideAllScreens();
+      screens.start.classList.add("active");
+      panelTitle.textContent = "교회 선택 후 시작해 주세요";
+      panelSubtitle.textContent = "진행자가 화면을 보며 순서대로 안내할 수 있도록 구성된 로컬 웹 페이지입니다.";
+    }
+
+    function showMain() {
+      hideAllScreens();
+      screens.main.classList.add("active");
+      if (churchName) {
+        panelTitle.textContent = `ADRA와 ${churchName}가 함께 하는 Warm Winter Christmas 🎄`;
+        if (churchInline1) churchInline1.textContent = churchName;
+        if (churchInline2) churchInline2.textContent = churchName;
+      }
+      panelSubtitle.textContent = "각 카드를 클릭하면 단계별 진행 방법이 표시됩니다. 아래 순서를 따라가도 되고, 필요한 부분만 선택해도 됩니다.";
+    }
+
+    function openSafetyModal(onOk, onCancel) {
+      safetyModal.style.display = 'flex';
+
+      const okHandler = () => {
+        safetyModal.style.display = 'none';
+        safetyOkBtn.removeEventListener('click', okHandler);
+        safetyCancelBtn.removeEventListener('click', cancelHandler);
+        onOk && onOk();
+      };
+
+      const cancelHandler = () => {
+        safetyModal.style.display = 'none';
+        safetyOkBtn.removeEventListener('click', okHandler);
+        safetyCancelBtn.removeEventListener('click', cancelHandler);
+        onCancel && onCancel();
+      };
+
+      safetyOkBtn.addEventListener('click', okHandler);
+      safetyCancelBtn.addEventListener('click', cancelHandler);
+    }
+
+    function showStep(index) {
+      // Step 3(인덱스 2) 진입 시 안전 확인 (세션당 1회)
+      if (index === 2 && sessionStorage.getItem('safety_ack_step3') !== '1') {
+        openSafetyModal(
+          () => {
+            sessionStorage.setItem('safety_ack_step3', '1');
+            _showStep(index);
+          },
+          () => {
+            showMain();
+          }
+        );
+        return;
+      }
+      _showStep(index);
+    }
+
+    function _showStep(index){
+      hideAllScreens();
+      currentStepIndex = index;
+      screens.steps[index].classList.add("active");
+      panelTitle.textContent = `Warm Winter Christmas · Step ${index + 1}`;
+      panelSubtitle.textContent = "이 화면의 안내 문장을 그대로 읽어도 자연스럽게 진행할 수 있도록 구성했습니다.";
+    }
+
+    // 교회 이름 입력 처리
+    const startBtn = document.getElementById("startBtn");
+    const churchInput = document.getElementById("churchInput");
+
+    startBtn.addEventListener("click", () => {
+      const raw = churchInput.value.trim();
+      if (!raw) {
+        alert("교회 이름을 입력해 주세요. 예: 석계 / 갈매");
+        churchInput.focus();
+        return;
+      }
+
+      let name = raw;
+      if (!name.endsWith("교회")) name = name + "교회";
+
+      churchName = name;
+
+      // inline 업데이트도 여기서 선반영
+      if (churchInline1) churchInline1.textContent = churchName;
+      if (churchInline2) churchInline2.textContent = churchName;
+
+      showMain();
+    });
+
+    churchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") startBtn.click();
+    });
+
+    // 메인 카드 클릭 → 해당 step으로
+    document.querySelectorAll(".card").forEach(card => {
+      card.addEventListener("click", () => {
+        const stepIndex = parseInt(card.getAttribute("data-step"), 10);
+        showStep(stepIndex);
+      });
+    });
+
+    // 메인으로 버튼들
+    document.querySelectorAll(".nav-home").forEach(btn => {
+      btn.addEventListener("click", showMain);
+    });
+
+    // 이전/다음 버튼
+    document.querySelectorAll(".nav-prev").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const prev = currentStepIndex - 1;
+        if (prev < 0) showMain();
+        else showStep(prev);
+      });
+    });
+
+    document.querySelectorAll(".nav-next").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const next = currentStepIndex + 1;
+        if (next >= screens.steps.length) showMain();
+        else showStep(next);
+      });
+    });
+
+    // 메인에서 "첫 단계로 이동"
+    const goToFirstStepBtn = document.getElementById("goToFirstStepBtn");
+    goToFirstStepBtn.addEventListener("click", () => showStep(0));
+
+    // ADRA 로고 클릭 시 메인으로
+    const logoHome = document.getElementById("logoHome");
+    logoHome.addEventListener("click", () => {
+      if (!churchName) {
+        alert("먼저 교회 이름을 입력해 주세요.");
+        showStart();
+      } else {
+        showMain();
+      }
+    });
+
+    // 초기 바인딩
+    bindMemoToggles();
+  </script>
+
+<script>
+/* ===============================
+   MOBILE SAFE BGM CONTROLLER
+   iOS / Android Compatible
+================================ */
+
+const bgm = document.getElementById("bgm");
+const playBtn = document.getElementById("playPauseBtn");
+const volumeSlider = document.getElementById("volumeSlider");
+
+let isPlaying = false;
+let unlocked = false;
+
+/* 최초 사용자 인터랙션 시 오디오 언락 + 즉시 재생 */
+function unlockAndPlay() {
+  if (unlocked) return;
+
+  bgm.volume = volumeSlider.value;
+  bgm.play().then(() => {
+    unlocked = true;
+    isPlaying = true;
+    playBtn.textContent = "일시정지";
+  }).catch(() => {});
+
+  document.removeEventListener("touchstart", unlockAndPlay);
+  document.removeEventListener("click", unlockAndPlay);
+}
+
+/* 모바일 정책 대응: 첫 터치/클릭 */
+document.addEventListener("touchstart", unlockAndPlay, { once: true });
+document.addEventListener("click", unlockAndPlay, { once: true });
+
+/* 버튼 컨트롤 */
+playBtn.addEventListener("click", () => {
+  if (!unlocked) {
+    unlockAndPlay();
+    return;
+  }
+
+  if (isPlaying) {
+    bgm.pause();
+    playBtn.textContent = "재생";
+  } else {
+    bgm.play();
+    playBtn.textContent = "일시정지";
+  }
+  isPlaying = !isPlaying;
+});
+
+/* 볼륨 */
+volumeSlider.addEventListener("input", e => {
+  bgm.volume = e.target.value;
+});
+</script>
+
+</body>
+</html>
