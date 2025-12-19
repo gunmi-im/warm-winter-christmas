@@ -29,12 +29,14 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
+   body {
   background: var(--bg);
   color: var(--text-main);
   font-family: "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
     /* 전체 폭 */
@@ -560,15 +562,65 @@
 
 }
 
+/* ===== PC에서 하단 네비 항상 보이게 ===== */
+@media (min-width: 1024px) {
+  .nav-row {
+    position: sticky;
+    bottom: 12px;
+    z-index: 10;
+
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.85),
+      rgba(0, 0, 0, 0.65),
+      rgba(0, 0, 0, 0)
+    );
+
+    padding: 12px 0;
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* ===== 모바일 텍스트 쏠림 보정 ===== */
+@media (max-width: 768px) {
+
+  /* 패널 안 텍스트 블록 중앙 안정화 */
+  .panel {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  /* 헤더 텍스트 정렬 보정 */
+  .panel-header {
+    align-items: center;
+    text-align: center;
+  }
+
+  .panel-title-block {
+    align-items: center;
+    text-align: center;
+  }
+
+  .panel-title {
+    text-align: center;
+    word-break: keep-all;
+  }
+
+  .panel-subtitle {
+    text-align: center;
+  }
+
+  /* 본문 설명은 가독성 위해 살짝만 중앙화 */
+  .start-lead,
+  .help-text {
+    text-align: center;
+  }
+}
+
   </style>
 </head>
 
-<body style="
-  max-width:100%;
-  overflow-x:hidden;
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-">  <!-- 좌우 큰 배경 그림 -->
+<body>  <!-- 좌우 큰 배경 그림 -->
   <div class="bg-illustration">
     <img src="assets/images/bg.png" alt="따뜻한 크리스마스 배경" class="left" />
     <img src="assets/images/bg.png" alt="따뜻한 크리스마스 배경" class="right" />
