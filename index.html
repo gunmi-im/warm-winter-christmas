@@ -617,6 +617,29 @@
   }
 }
 
+/* ===== 모바일에서 헤더 레이아웃 재정렬 ===== */
+@media (max-width: 768px) {
+
+  .panel-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+
+  /* 로고를 위로 */
+  .panel-logo {
+    order: -1;
+  }
+
+  /* 텍스트 블록 */
+  .panel-title-block {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+
   </style>
 </head>
 
@@ -683,7 +706,7 @@
         <div class="memo-box" id="memo-start">
           <strong>진행자 메모</strong>
           <ul class="memo-list">
-            <li>진행 시작 전: BGM 볼륨(0.3~0.5) + 좌석 배치(원형/ㄷ자) 먼저 정리하면 진행이 편합니다.</li>
+            <li>진행 시작 전: BGM 볼륨을 적절히 조정해주세요.</li>
             <li>교회명은 화면 상단에 자동 반영됩니다. (예: “갈매” 입력 → “갈매교회”)</li>
             <li>현장 혼잡을 줄이려면 프로그램 시작 전에 “패키지는 단계가 되었을 때 열기”를 한 번만 강조해 주세요.</li>
           </ul>
